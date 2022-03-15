@@ -1,3 +1,6 @@
+import pygame
+from settings import frame_size_x, frame_size_y
+
 def sides_coord(list_coord):
     max_y = [list_coord[0][1], 0]
     max_x = [list_coord[0][0], 0]
@@ -31,6 +34,18 @@ def is_shooted(left, right, up, down, bull):
                     if elem[1]+15 >= up and elem[1]+15 <= down:
                         index.append(count)
     return index
+
+
+def show_score(score, choice, color, font, size, game_window):
+    score_font = pygame.font.SysFont(font, size)
+    score_surface = score_font.render("Score: " + str(score), True, color)
+    score_rect = score_surface.get_rect()
+    if choice == 1:
+        score_rect.midtop = (frame_size_x / 10, 15)
+    else:
+        score_rect.midtop = (frame_size_x / 2, frame_size_y / 1.25)
+
+    game_window.blit(score_surface, score_rect)
 # list_coord = [[160, 80], [148, 112], [132, 100], [128, 84],
 #               [104, 116], [108, 132], [124, 148], [148, 148],
 #               [160, 136], [172, 148], [196, 148], [212, 132],
