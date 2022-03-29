@@ -81,15 +81,13 @@ while True:
     if shoot_up:
         shoot_up = False
     for i in range(len(plain_enemy)-1, -1, -1):
-        destroy_plain = is_shooted(plain_enemy[i].left_side_coord(), plain_enemy[i].right_side_coord(),
-                                   plain_enemy[i].up_side_coord(), plain_enemy[i].left_side_coord(),
-                                   plain_bullet.bullet_list)
+        destroy_plain = is_shooted(plain_enemy[i].coord, plain_bullet.bullet_list)
         if len(destroy_plain) != 0:
             pygame.draw.polygon(game_window, BLACK, plain_enemy[i].coord)
-            plain_enemy.pop()
+            plain_enemy.pop(i)
             score += 1
 
-# Move enemy plain
+    # Move enemy plains
     for plains in plain_enemy:
         if plains.right_side_coord() + speed >= frame_size_x:
             plains.re_swap(True)
@@ -101,6 +99,7 @@ while True:
         else:
             plains.move('d')
 
+    #Adding new enemy plain
     if pygame.time.get_ticks()%1000 <= clock.get_time() and pygame.time.get_ticks() > 2000:
         plain_enemy.append(Plain(plain_enemy_coord, game_window, plain_speed, random.choice(enemy_plains_color)))
         plain_enemy[len(plain_enemy)-1].resize(0.2)
@@ -112,8 +111,9 @@ while True:
         pygame.draw.polygon(game_window, random.choice([RED, BLUE]), plains.coord)
     pygame.draw.polygon(game_window, WHITE, plain.coord)
     plain_bullet.draw()
+    show_score(score, 2, WHITE, 'consolas', 20, game_window)
     pygame.display.update()
-    #show_score(score, 2, WHITE, 'consolas', 20, game_window)
+
     clock.tick(FPS)
 
 

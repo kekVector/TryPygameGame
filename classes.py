@@ -1,13 +1,11 @@
 import pygame
-import settings
+from settings import *
 import random
 from func import sides_coord
-frame_size_x = settings.frame_size_x
-frame_size_y = settings.frame_size_y
 
 
 class Plain:
-    def __init__(self, list_coord, game_window, speed=7, swap=False, color=settings.RED):
+    def __init__(self, list_coord, game_window, speed=7, swap=False, color=RED):
         self.coord = []
         self.game_window = game_window
         self.speed = speed
@@ -37,11 +35,11 @@ class Plain:
                 for coord in self.coord:
                     coord[0] -= self.speed
         elif button == 's':
-            if self.coord[self.min_y_index][1] + self.speed < settings.frame_size_y:
+            if self.coord[self.min_y_index][1] + self.speed < frame_size_y:
                 for coord in self.coord:
                     coord[1] += self.speed
         elif button == 'd':
-            if self.coord[self.max_x_index][0] + self.speed < settings.frame_size_x:
+            if self.coord[self.max_x_index][0] + self.speed < frame_size_x:
                 for coord in self.coord:
                     coord[0] += self.speed
 
@@ -84,7 +82,7 @@ class Bullets:
     def draw(self):
         for count, elem in enumerate(self.bullet_list):
             pygame.draw.line(self.game_window, self.color_list[count] if self.color_list[count] != 'random' else
-                             random.choice([settings.RED, settings.GREEN, settings.BLUE]), elem,
+                             random.choice([RED, GREEN, BLUE]), elem,
                              [elem[0], (elem[1] + self.direction*(-15))], 3)
             elem[1] -= 15*self.direction
             if elem[1] <= 0:

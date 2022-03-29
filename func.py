@@ -1,5 +1,8 @@
 import pygame
 from settings import frame_size_x, frame_size_y
+from shapely.geometry import Point
+from shapely.geometry.polygon import Polygon
+
 
 def sides_coord(list_coord):
     max_y = [list_coord[0][1], 0]
@@ -23,17 +26,24 @@ def sides_coord(list_coord):
     return max_x[1], min_x[1], max_y[1], min_y[1]
 
 
-def is_shooted(left, right, up, down, bull):
+def is_shooted(plain_coord, bullets):
     index = []
-    if len(bull) != 0:
-        for count, elem in enumerate(bull):
-            if elem[0] <= right and elem[0] >= left:
-                if elem[1] >= up  and elem[1] <= down:
-                    index.append(count)
-                if elem not in index:
-                    if elem[1]+15 >= up and elem[1]+15 <= down:
-                        index.append(count)
+    polygon = Polygon(plain_coord)
+    if len(bullets) != 0:
+        for count, elem in enumerate(bullets):
+            if polygon.contains(Point(elem)) or polygon.contains(Point((elem[0], elem[1]-15))):
+                index.append(count)
     return index
+    # index = []
+    # if len(bull) != 0:
+    #     for count, elem in enumerate(bull):
+    #         if elem[0] <= right and elem[0] >= left:
+    #             if elem[1] >= up  and elem[1] <= down:
+    #                 index.append(count)
+    #             if elem not in index:
+    #                 if elem[1]+15 >= up and elem[1]+15 <= down:
+    #                     index.append(count)
+    # return index
 
 
 def show_score(score, choice, color, font, size, game_window):
@@ -46,6 +56,11 @@ def show_score(score, choice, color, font, size, game_window):
         score_rect.midtop = (frame_size_x / 2, frame_size_y / 1.25)
 
     game_window.blit(score_surface, score_rect)
+
+
+
+
+
 # list_coord = [[160, 80], [148, 112], [132, 100], [128, 84],
 #               [104, 116], [108, 132], [124, 148], [148, 148],
 #               [160, 136], [172, 148], [196, 148], [212, 132],
