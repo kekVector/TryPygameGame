@@ -5,17 +5,30 @@ from func import sides_coord
 
 
 class Plain:
-    def __init__(self, list_coord, game_window, speed=7, swap=False, color=RED):
+    def __init__(self, list_coord, game_window, speed=7, swap=False, color=RED, start_coord = False):
         self.coord = []
         self.game_window = game_window
         self.speed = speed
-        self.coord_start = [list_coord[0][0], list_coord[0][1]]
+        #self.coord_start = [list_coord[0][0], list_coord[0][1]]
+        if start_coord:
+            x_diff = start_coord[0] - list_coord[0][0]
+            y_diff = start_coord[1] - list_coord[0][0]
+        else:
+            x_diff = 0
+            y_diff = 0
         for i in list_coord:
-            self.coord.append([i[0], i[1]])
+            self.coord.append([i[0]+x_diff, i[1]+y_diff])
         self.max_x_index, self.min_x_index, self.max_y_index, self.min_y_index = sides_coord(self.coord)
         self.swap = swap
         self.alive = True
         self.color = color
+
+    def replace(self, start_coord):
+        x_diff = start_coord[0] - self.coord[0][0]
+        y_diff = start_coord[1] - self.coord[0][1]
+        for i in range(len(self.coord)):
+            self.coord[i][0] += x_diff
+            self.coord[i][1] += y_diff
 
     def resize(self, k):
         for count, i in enumerate(self.coord):

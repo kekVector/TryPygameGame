@@ -101,7 +101,8 @@ while True:
 
     #Adding new enemy plain
     if pygame.time.get_ticks()%1000 <= clock.get_time() and pygame.time.get_ticks() > 2000:
-        plain_enemy.append(Plain(plain_enemy_coord, game_window, plain_speed, random.choice(enemy_plains_color)))
+        plain_enemy.append(Plain(plain_enemy_coord, game_window, plain_speed, random.choice(enemy_plains_color),
+                                 start_coord=(random.randint(200, 800), random.randint(600, 1500))))
         plain_enemy[len(plain_enemy)-1].resize(0.2)
     print(score)
 
