@@ -5,7 +5,7 @@ from func import sides_coord
 
 
 class Plain:
-    def __init__(self, list_coord, game_window, speed=7, swap=False, color=RED, start_coord = False):
+    def __init__(self, list_coord, game_window, speed=7, swap=False, color=RED, start_coord=False, cooldown=5):
         self.coord = []
         self.game_window = game_window
         self.speed = speed
@@ -22,6 +22,16 @@ class Plain:
         self.swap = swap
         self.alive = True
         self.color = color
+        self.cooldown = cooldown
+        self.current_cooldown = cooldown
+
+    def shoot_reload(self):
+        if self.current_cooldown >= self.cooldown:
+            self.current_cooldown = 0
+            return True
+        else:
+            self.current_cooldown += 1
+            return False
 
     def replace(self, start_coord):
         x_diff = start_coord[0] - self.coord[0][0]
@@ -98,9 +108,9 @@ class Bullets:
                              random.choice([RED, GREEN, BLUE]), elem,
                              [elem[0], (elem[1] + self.direction*(-15))], 3)
             elem[1] -= 15*self.direction
-            if elem[1] <= 0:
-                self.bullet_list.pop()
-                self.color_list.pop()
+            if elem[1] <= 0 or elem[1] >= frame_size_y:
+                self.bullet_list.pop(count)
+                self.color_list.pop(count)
 
     def del_bullet(self, index):
         del self.bullet_list[index]

@@ -7,20 +7,19 @@ from settings import *
 from classes import *
 from func import is_shooted, show_score
 
-# start settings
 
+# start settings
 pygame.init()
 game_window = pygame.display.set_mode((frame_size_x, frame_size_y))
 pygame.display.set_caption("My Game")
 clock = pygame.time.Clock()
 game_window.fill(BLACK)
 
-
 plain = Plain(plain_coordinates, game_window, plain_speed)
 plain_bullet = Bullets(game_window)
+enemy_bullets = Bullets(game_window, direction='down')
 plain_enemy = []
 plain_enemy.append(Plain(plain_enemy_coord, game_window, plain_speed, random.choice(enemy_plains_color)))
-# game start
 
 score = 0
 current_button = 't'
@@ -30,9 +29,10 @@ shoot_down = False
 shoot_up = False
 plain.resize(0.4)
 plain_enemy[0].resize(0.2)
+game_start = True
 
-
-while True:
+# game start
+while game_start:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -52,7 +52,6 @@ while True:
                 key_pressed = True
         elif event.type == pygame.MOUSEBUTTONDOWN:
             shoot_down = True
-            shoot_reload = 5
         if event.type == pygame.MOUSEBUTTONUP:
             shoot_down = False
             shoot_up = True
@@ -63,23 +62,30 @@ while True:
 
 
 # Fill area and start drawing from the beginning
-    # Moving objects
-
     game_window.fill(BLACK)
+
+    # Move main plain
     if key_pressed:
         plain.move(current_button)
     if keyup:
         plain.move(current_button)
         keyup = False
 
+    # Shoot main plain
     if shoot_down:
-        if shoot_reload > 5:
+        if plain.shoot_reload():
             plain_bullet.add_shoot(plain.get_start_coord(), (15,200, 200))
-            shoot_reload = 0
-        else:
-            shoot_reload += 1
     if shoot_up:
         shoot_up = False
+
+
+    # Shoot enemy plains
+    for count, elem in enumerate(plain_enemy):
+        if elem.shoot_reload():
+            if random.random() <= 0.08:
+                enemy_bullets.add_shoot(elem.get_start_coord(), 'random')
+
+    # Destroy enemy plains
     for i in range(len(plain_enemy)-1, -1, -1):
         destroy_plain = is_shooted(plain_enemy[i].coord, plain_bullet.bullet_list)
         if len(destroy_plain) != 0:
@@ -93,28 +99,28 @@ while True:
             plains.re_swap(True)
         if plains.left_side_coord() - speed <= 0:
             plains.re_swap(False)
-
         if plains.swap:
             plains.move('a')
         else:
             plains.move('d')
 
-    #Adding new enemy plain
-    if pygame.time.get_ticks()%1000 <= clock.get_time() and pygame.time.get_ticks() > 2000:
-        plain_enemy.append(Plain(plain_enemy_coord, game_window, plain_speed, random.choice(enemy_plains_color),
-                                 start_coord=(random.randint(200, 800), random.randint(600, 1500))))
-        plain_enemy[len(plain_enemy)-1].resize(0.2)
+    # Adding new enemy plain
+    if pygame.time.get_ticks()%2000 <= clock.get_time() and pygame.time.get_ticks() > 2000:
+        plain_enemy.append(Plain(plain_enemy_coord, game_window, speed=random.randint(4, 11),
+                                 color=random.choice(enemy_plains_color),
+                                 start_coord=(random.randint(200, 800), random.randint(50, 500))))
+        plain_enemy[len(plain_enemy)-1].resize(random.uniform(0.2, 0.7))
     print(score)
 
-
-    #drawing
+    # Drawing
     for plains in plain_enemy:
-        pygame.draw.polygon(game_window, random.choice([RED, BLUE]), plains.coord)
+        pygame.draw.polygon(game_window, plains.color, plains.coord)
     pygame.draw.polygon(game_window, WHITE, plain.coord)
     plain_bullet.draw()
+    enemy_bullets.draw()
     show_score(score, 2, WHITE, 'consolas', 20, game_window)
-    pygame.display.update()
 
+    pygame.display.update()
     clock.tick(FPS)
 
 
