@@ -5,11 +5,12 @@ from func import sides_coord
 
 
 class Plain:
-    def __init__(self, list_coord, game_window, speed=7, swap=False, color=RED, start_coord=False, cooldown=5):
+    def __init__(self, list_coord, game_window, speed=7, swap=False, color=RED, start_coord=False, cooldown=5, hp=10):
         self.coord = []
         self.game_window = game_window
         self.speed = speed
-        #self.coord_start = [list_coord[0][0], list_coord[0][1]]
+        self.max_health = hp
+        self.current_hp = hp
         if start_coord:
             x_diff = start_coord[0] - list_coord[0][0]
             y_diff = start_coord[1] - list_coord[0][0]
@@ -87,6 +88,12 @@ class Plain:
     def die(self):
         self.alive = False
 
+    def get_hp(self, hp):
+        if self.current_hp + hp >= self.max_health:
+            self.current_hp = self.max_health
+        else:
+            self.current_hp += hp
+
 
 class Bullets:
     def __init__(self, game_window,  direction = 'up'):
@@ -114,3 +121,33 @@ class Bullets:
 
     def del_bullet(self, index):
         del self.bullet_list[index]
+
+
+class Health_sphere:
+    def __init__(self, game_window, speed=2, value=3, start_coord='random', color=[WHITE, GREEN]):
+        self.coord_plus = [[10, 0], [20, 0], [20, 10], [30, 10], [30, 20], [20, 20], [20, 30],
+                           [10, 30], [10, 20], [0, 20], [0, 10], [10, 10], [10, 0]]
+        self.color_plus = color[0]
+        self.color_circle = color[1]
+        self.coord_circle = [15, 15]
+        self.radius = 17
+        self.replace([random.randint(30, frame_size_x-30), 20] if start_coord == 'random' else start_coord)
+        self.speed = speed
+        self.value_health = value
+        self.game_window = game_window
+
+    def replace(self, start_coord):
+        x_diff = start_coord[0] - self.coord_plus[0][0]
+        y_diff = start_coord[1] - self.coord_plus[0][1]
+        for i in range(len(self.coord_plus)):
+            self.coord_plus[i][0] += x_diff
+            self.coord_plus[i][1] += y_diff
+        self.coord_circle[0] = self.coord_plus[0][0] + 5
+        self.coord_circle[1] = self.coord_plus[0][1] + 15
+
+    def draw(self):
+        self.coord_circle[1] += self.speed
+        for count, elem in enumerate(self.coord_plus):
+            self.coord_plus[count][1] += self.speed
+        pygame.draw.circle(self.game_window, self.color_circle, self.coord_circle, self.radius)
+        pygame.draw.polygon(self.game_window, self.color_plus, self.coord_plus)

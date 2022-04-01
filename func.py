@@ -1,5 +1,5 @@
 import pygame
-from settings import frame_size_x, frame_size_y
+from settings import frame_size_x, frame_size_y, GREEN, WHITE, max_health_main_plain
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 
@@ -33,6 +33,7 @@ def is_shooted(plain_coord, bullets):
         for count, elem in enumerate(bullets):
             if polygon.contains(Point(elem)) or polygon.contains(Point((elem[0], elem[1]-15))):
                 index.append(count)
+
     return index
     # index = []
     # if len(bull) != 0:
@@ -58,8 +59,9 @@ def show_score(score, choice, color, font, size, game_window):
     game_window.blit(score_surface, score_rect)
 
 
-
-
+def draw_health(game_window, current_health):
+    pygame.draw.rect(game_window, WHITE, (10, frame_size_y-37, 80, 20))
+    pygame.draw.rect(game_window, GREEN, (12, frame_size_y-35, (current_health/max_health_main_plain)*76, 16))
 
 # list_coord = [[160, 80], [148, 112], [132, 100], [128, 84],
 #               [104, 116], [108, 132], [124, 148], [148, 148],

@@ -1,12 +1,12 @@
 
-#windows size
+# Windows size
 
 frame_size_x = 1000
 frame_size_y = 800
 speed = 15
 FPS = 60
 
-#colors
+# Colors
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -16,7 +16,13 @@ BLUE = (0, 0, 255)
 enemy_plains_color = [(205, 92, 92), (240, 128, 128), (250, 128, 114),
                       (233, 150, 122), (255, 160, 122), (220, 20, 60),
                       (255, 0, 0), (178, 34, 34), (139, 0, 0)]
-#coordinates by the plain(x,y - start)
+
+# Stats
+plain_speed = 7
+max_health_main_plain = 10
+
+
+# Coordinates by the plain(x,y - start)
 x = 400
 y = 400
 
@@ -25,14 +31,12 @@ plain_coordinates = [[x, y], [x-30, y+80], [x-70, y+50], [x-80, y+10], [x-140, y
                     [x+30, y+170], [x+90, y+170], [x+130, y+130], [x+140, y+90],
                      [x+80, y+10], [x+70, y+50], [x+30, y+80], [x, y]]
 
-#other settings
-plain_speed = 7
+# Other settings
+
 
 plain_enemy_coord_2 = []
-
 for count, elem in enumerate(plain_coordinates):
     plain_enemy_coord_2.append([plain_coordinates[count][0], ((plain_coordinates[count][1]-y)*(-1)) + y-200])
-
 plain_enemy_coord = [[0, 0], [10, 0], [20, -20], [40, -30], [50, -10], [50, 30],
                      [40, 50], [30, 60], [10, 70], [40, 75], [40, 100], [60, 60],
                      [80, 0], [90, -10], [90, -10], [100, -10], [110, -20], [110, -30],
