@@ -123,7 +123,7 @@ class Bullets:
         del self.bullet_list[index]
 
 
-class Health_sphere:
+class HealthSphere:
     def __init__(self, game_window, speed=2, value=3, start_coord='random', color=[WHITE, GREEN]):
         self.coord_plus = [[10, 0], [20, 0], [20, 10], [30, 10], [30, 20], [20, 20], [20, 30],
                            [10, 30], [10, 20], [0, 20], [0, 10], [10, 10], [10, 0]]

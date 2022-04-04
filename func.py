@@ -35,16 +35,6 @@ def is_shooted(plain_coord, bullets):
                 index.append(count)
 
     return index
-    # index = []
-    # if len(bull) != 0:
-    #     for count, elem in enumerate(bull):
-    #         if elem[0] <= right and elem[0] >= left:
-    #             if elem[1] >= up  and elem[1] <= down:
-    #                 index.append(count)
-    #             if elem not in index:
-    #                 if elem[1]+15 >= up and elem[1]+15 <= down:
-    #                     index.append(count)
-    # return index
 
 
 def show_score(score, choice, color, font, size, game_window):

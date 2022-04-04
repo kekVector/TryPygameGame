@@ -21,6 +21,14 @@ enemy_plains_color = [(205, 92, 92), (240, 128, 128), (250, 128, 114),
 plain_speed = 7
 max_health_main_plain = 10
 
+# Main menu settings
+button_menu_start_coord = [frame_size_x/6, frame_size_y/9]
+button_menu_width = (frame_size_x/6)*4
+button_menu_height = (frame_size_y/9)*2
+
+button_exit_start_coord = [frame_size_x/6, (frame_size_y/9)*4]
+button_exit_width = button_menu_width
+button_exit_height = button_menu_height
 
 # Coordinates by the plain(x,y - start)
 x = 400
