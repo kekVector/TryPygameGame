@@ -6,6 +6,7 @@ from random import randint
 from settings import *
 from classes import *
 from func import is_shooted, show_score, draw_health
+import packets
 
 def start_game():
     # start settings
@@ -51,6 +52,8 @@ def start_game():
                 elif event.key == ord('d'):
                     current_button = 'd'
                     key_pressed = True
+                elif event.key == pygame.K_ESCAPE:
+                    packets.pause()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 shoot_down = True
             if event.type == pygame.MOUSEBUTTONUP:
@@ -61,8 +64,7 @@ def start_game():
                     keyup = True
                     key_pressed = False
 
-
-    # Fill area and start drawing from the beginning
+        # Fill area and start drawing from the beginning
         game_window.fill(BLACK)
 
         # Move main plain
@@ -75,7 +77,7 @@ def start_game():
         # Shoot main plain
         if shoot_down:
             if plain.shoot_reload():
-                plain_bullet.add_shoot(plain.get_start_coord(), (15,200, 200))
+                plain_bullet.add_shoot(plain.get_start_coord(), (15, 200, 200))
         if shoot_up:
             shoot_up = False
 
@@ -86,7 +88,7 @@ def start_game():
                     enemy_bullets.add_shoot(elem.get_start_coord(), 'random')
 
         # Destroy enemy plains
-        for i in range(len(plain_enemy)-1, -1, -1):
+        for i in range(len(plain_enemy) - 1, -1, -1):
             destroy_plain = is_shooted(plain_enemy[i].coord, plain_bullet.bullet_list)
             if len(destroy_plain) != 0:
                 pygame.draw.polygon(game_window, BLACK, plain_enemy[i].coord)
@@ -103,7 +105,7 @@ def start_game():
             game_start = False
 
         # Get healths
-        for i in range(len(health_spawn)-1, -1, -1):
+        for i in range(len(health_spawn) - 1, -1, -1):
             get_health = is_shooted(plain.coord, [health_spawn[i].coord_circle])
             if len(get_health) != 0:
                 plain.get_hp(health_spawn[i].value_health)
@@ -121,11 +123,11 @@ def start_game():
                 plains.move('d')
 
         # Adding new enemy plain
-        if pygame.time.get_ticks()%1500 <= clock.get_time() and pygame.time.get_ticks() > 2000:
+        if pygame.time.get_ticks() % 1500 <= clock.get_time() and pygame.time.get_ticks() > 2000:
             plain_enemy.append(Plain(plain_enemy_coord, game_window, speed=random.randint(4, 11),
                                      color=random.choice(enemy_plains_color),
                                      start_coord=(random.randint(200, 800), random.randint(50, 500))))
-            plain_enemy[len(plain_enemy)-1].resize(random.uniform(0.2, 0.7))
+            plain_enemy[len(plain_enemy) - 1].resize(random.uniform(0.2, 0.7))
 
         # Adding health
         if random.random() <= 0.003:
@@ -144,8 +146,11 @@ def start_game():
         pygame.display.update()
         clock.tick(FPS)
 
-
     while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
         game_window.fill(BLACK)
         show_score(score, 2, WHITE, 'consolas', 20, game_window)
         pygame.display.update()

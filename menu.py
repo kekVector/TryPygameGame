@@ -1,83 +1,50 @@
 import pygame
 from settings import *
 import main
+from classes import ButtonMenu
 
 
-pygame.init()
-game_window = pygame.display.set_mode((frame_size_x, frame_size_y))
-pygame.display.set_caption("Airplane")
-clock = pygame.time.Clock()
-game_window.fill(BLACK)
-button_click = False
-start_menu_change = False
-start_exit_change = False
-# Text settings
-start_button_color = (50, 205, 50)
-font_start_button = pygame.font.Font(None, 128)
-text_start_button = font_start_button.render("START GAME", True, start_button_color)
-place_start_button = text_start_button.get_rect(center=(frame_size_x/2, frame_size_y/4.5))
-
-exit_button_color = (178, 34, 34)
-font_exit_button = pygame.font.Font(None, 128)
-text_exit_button = font_exit_button.render("EXIT", True, exit_button_color)
-place_exit_button = text_exit_button.get_rect(center=(frame_size_x/2, (frame_size_y/9)*5))
-
-
-while not button_click:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-        elif event.type == pygame.MOUSEMOTION:
-            if ((button_menu_start_coord[0] + button_menu_width) >= event.pos[0] >= button_menu_start_coord[0]) and\
-                    ((button_menu_start_coord[1] + button_menu_height) >= event.pos[1] >= button_menu_start_coord[1]):
-                start_menu_change = True
-            else:
-                start_menu_change = False
-            if (button_exit_start_coord[0] + button_exit_width >= event.pos[0] >= button_exit_start_coord[0]) and\
-                    (button_exit_start_coord[1] + button_exit_height >= event.pos[1] >= button_exit_start_coord[1]):
-                start_exit_change = True
-            else:
-                start_exit_change = False
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if ((button_menu_start_coord[0] + button_menu_width) >= event.pos[0] >= button_menu_start_coord[0]) and \
-                    ((button_menu_start_coord[1] + button_menu_height) >= event.pos[1] >= button_menu_start_coord[1]):
-                main.start_game()
-            elif (button_exit_start_coord[0] + button_exit_width >= event.pos[0] >= button_exit_start_coord[0]) and \
-                    (button_exit_start_coord[1] + button_exit_height >= event.pos[1] >= button_exit_start_coord[1]):
-                pygame.quit()
-
+def menu():
+    pygame.init()
+    game_window = pygame.display.set_mode((frame_size_x, frame_size_y))
+    pygame.display.set_caption("Airplane")
+    clock = pygame.time.Clock()
     game_window.fill(BLACK)
 
-    # Draw start_button
-    pygame.draw.rect(game_window, start_button_color, (button_menu_start_coord[0], button_menu_start_coord[1],
-                     button_menu_width, button_menu_height), 10)
+    # Buttons settings
 
-    if start_menu_change:
-        pygame.draw.rect(game_window, WHITE, (button_menu_start_coord[0], button_menu_start_coord[1],
-                                              button_menu_width, button_menu_height), 3)
-        font_start_button = pygame.font.Font(None, 118)
-        text_start_button = font_start_button.render("START GAME", True, start_button_color)
-        place_start_button = text_start_button.get_rect(center=(frame_size_x / 2, frame_size_y / 4.5))
-    else:
-        font_start_button = pygame.font.Font(None, 128)
-        text_start_button = font_start_button.render("START GAME", True, start_button_color)
-        place_start_button = text_start_button.get_rect(center=(frame_size_x / 2, frame_size_y / 4.5))
-    game_window.blit(text_start_button, place_start_button)
+    button_start_game = ButtonMenu(start_button_color, start_button_color,
+                                   btn_coord=[frame_size_x / 6, frame_size_y / 18],
+                                   btn_text="START GAME", btn_height=(frame_size_y / 9) * 2,
+                                   btn_width=(frame_size_x / 6) * 4
+                                   )
 
-    # Draw exit Button
-    pygame.draw.rect(game_window, exit_button_color, (button_exit_start_coord[0], button_exit_start_coord[1],
-                     button_exit_width, button_exit_height), 10)
-    if start_exit_change:
-        pygame.draw.rect(game_window, WHITE, (button_exit_start_coord[0], button_exit_start_coord[1],
-                                              button_exit_width, button_exit_height), 2)
-        font_exit_button = pygame.font.Font(None, 118)
-        text_exit_button = font_exit_button.render("EXIT", True, exit_button_color)
-        place_exit_button = text_exit_button.get_rect(center=(frame_size_x / 2, (frame_size_y / 9) * 5))
-    else:
-        font_exit_button = pygame.font.Font(None, 128)
-        text_exit_button = font_exit_button.render("EXIT", True, exit_button_color)
-        place_exit_button = text_exit_button.get_rect(center=(frame_size_x / 2, (frame_size_y / 9) * 5))
-    game_window.blit(text_exit_button, place_exit_button)
+    button_exit = ButtonMenu(exit_button_color, exit_button_text_color,
+                             btn_coord=[button_start_game.x_start_coord, (frame_size_y / 9) * 5],
+                             btn_text="EXIT", btn_height=button_start_game.height,
+                             btn_width=button_start_game.width
+                             )
 
-    pygame.display.update()
-    clock.tick(10)
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.MOUSEMOTION:
+                button_start_game.tapped = button_start_game.is_point_on_button(event.pos)
+                button_exit.tapped = button_exit.is_point_on_button(event.pos)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if button_start_game.is_point_on_button(event.pos):
+                    main.start_game()
+                elif button_exit.is_point_on_button(event.pos):
+                    pygame.quit()
+
+        game_window.fill(BLACK)
+        button_start_game.draw(game_window)
+        button_exit.draw(game_window)
+
+        pygame.display.update()
+        clock.tick(10)
+
+
+if __name__ == '__main__':
+    menu()
