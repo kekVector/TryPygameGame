@@ -12,7 +12,6 @@ def menu():
     game_window.fill(BLACK)
 
     # Buttons settings
-
     button_start_game = ButtonMenu(start_button_color, start_button_color,
                                    btn_coord=[frame_size_x / 6, frame_size_y / 18],
                                    btn_text="START GAME", btn_height=(frame_size_y / 9) * 2,

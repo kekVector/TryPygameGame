@@ -112,8 +112,7 @@ class Bullets:
     def draw(self):
         for count, elem in enumerate(self.bullet_list):
             pygame.draw.line(self.game_window, self.color_list[count] if self.color_list[count] != 'random' else
-            random.choice([RED, GREEN, BLUE]), elem,
-                             [elem[0], (elem[1] + self.direction * (-15))], 3)
+            random.choice([RED, GREEN, BLUE]), elem, [elem[0], (elem[1] + self.direction * (-15))], 3)
             elem[1] -= 15 * self.direction
             if elem[1] <= 0 or elem[1] >= frame_size_y:
                 self.bullet_list.pop(count)
@@ -178,7 +177,6 @@ class ButtonMenu:
         self.place_button_up = self.text_button_up.get_rect(
             center=(btn_width / 2 + btn_coord[0], btn_height / 2 + btn_coord[1]))
 
-
         self.button_rect = pygame.Rect((btn_coord[0], btn_coord[1], btn_width, btn_height))
 
     def draw_up_button(self, game_window):
@@ -199,3 +197,25 @@ class ButtonMenu:
             self.draw_down_button(game_window)
         else:
             self.draw_up_button(game_window)
+
+
+class FontSpace:
+    def __init__(self, move_speed, frequency, r=2):
+        self.move_speed = move_speed
+        self.frequency = frequency
+        self.radius = r
+        self.stars = []
+        for y in range(0, frame_size_y, frequency):
+            self.stars.append([random.randint(3, frame_size_x - 1), y])
+
+    def font_move(self, game_window):
+        if self.stars[0][1] >= self.frequency:
+            self.stars.insert(0, [random.randint(3, frame_size_x - 1), 0])
+            if random.random() <= 0.001:
+                self.stars.insert(0, [random.randint(3, frame_size_x - 1), 0])
+        for i in range(len(self.stars) - 1, -1, -1):
+            self.stars[i][1] += self.move_speed
+            if self.stars[i][1] >= frame_size_y:
+                self.stars.pop(i)
+            else:
+                pygame.draw.circle(game_window, WHITE, self.stars[i], self.radius)

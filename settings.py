@@ -26,8 +26,8 @@ start_button_color = (50, 205, 50)
 start_button_text_color = start_button_color
 exit_button_color = (178, 34, 34)
 exit_button_text_color = exit_button_color
-button_pause_resum_color = (255, 69, 0)
-button_pause_resum_color_text = button_pause_resum_color
+button_pause_resume_color = (255, 69, 0)
+button_pause_resume_color_text = button_pause_resume_color
 button_pause_restart_color = (255, 99, 71)
 button_pause_restart_color_text = button_pause_restart_color
 button_pause_main_menu_color = (255, 160, 122)
@@ -79,5 +79,5 @@ plain_enemy_coord = [[0, 0], [30, -10], [50, -30], [70, -40], [70, -10], [75, 0]
                      [20, -230], [0, -250], [-20, -230], [-30, -200], [-40, -170], [-60, -160], [-90, -180],
                      [-100, -200], [-110, -210], [-120, -200], [-130, -180], [-120, -160], [-90, -130], [-100, -100],
                      [-120, -110], [-130, -120], [-150, -130], [-160, -110], [-170, -90], [-160, -70], [-150, -60],
-                     [-130, -50], [-130, -30], [-125, -20], [120, -30], [120, -50], [100, -50], [80, -40], [80, -10],
-                     [75, 0], [70, -10], [70, -40], [50, -30], [30, -10], [0, 0]]
+                     [-130, -50], [-130, -30], [-125, -20], [-120, -30], [-120, -50], [-100, -50], [-80, -40], [-80, -10],
+                     [-75, 0], [-70, -10], [-70, -40], [-50, -30], [-30, -10], [0, 0]]

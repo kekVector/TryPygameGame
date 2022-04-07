@@ -42,9 +42,9 @@ def show_score(score, choice, color, font, size, game_window):
     score_surface = score_font.render("Score: " + str(score), True, color)
     score_rect = score_surface.get_rect()
     if choice == 1:
-        score_rect.midtop = (frame_size_x / 10, 15)
+        score_rect.midtop = (frame_size_x / 5, 15)
     else:
-        score_rect.midtop = (frame_size_x / 2, frame_size_y / 1.25)
+        score_rect.midtop = (50, frame_size_y - 60)
 
     game_window.blit(score_surface, score_rect)
 

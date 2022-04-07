@@ -8,6 +8,7 @@ from classes import *
 from func import is_shooted, show_score, draw_health
 import packets
 
+
 def start_game():
     # start settings
     pygame.init()
@@ -32,7 +33,7 @@ def start_game():
     plain.resize(0.4)
     plain_enemy[0].resize(0.2)
     game_start = True
-
+    font_stars = FontSpace(1.7, 10)
     # game start
     while game_start:
         for event in pygame.event.get():
@@ -66,7 +67,7 @@ def start_game():
 
         # Fill area and start drawing from the beginning
         game_window.fill(BLACK)
-
+        font_stars.font_move(game_window)
         # Move main plain
         if key_pressed:
             plain.move(current_button)
@@ -92,8 +93,12 @@ def start_game():
             destroy_plain = is_shooted(plain_enemy[i].coord, plain_bullet.bullet_list)
             if len(destroy_plain) != 0:
                 pygame.draw.polygon(game_window, BLACK, plain_enemy[i].coord)
-                plain_enemy.pop(i)
-                score += 1
+                plain_enemy[i].current_hp -= 1
+                if plain_enemy[i].current_hp <= 0:
+                    score += 1
+                    plain_enemy.pop(i)
+                for i in destroy_plain:
+                    plain_bullet.del_bullet(i)
 
         # Lose health on hit
         destroy_plain = is_shooted(plain.coord, enemy_bullets.bullet_list)
@@ -126,7 +131,8 @@ def start_game():
         if pygame.time.get_ticks() % 1500 <= clock.get_time() and pygame.time.get_ticks() > 2000:
             plain_enemy.append(Plain(plain_enemy_coord, game_window, speed=random.randint(4, 11),
                                      color=random.choice(enemy_plains_color),
-                                     start_coord=(random.randint(200, 800), random.randint(50, 500))))
+                                     start_coord=(random.randint(200, 800), random.randint(50, 500)),
+                                     hp=random.randint(1, 4)))
             plain_enemy[len(plain_enemy) - 1].resize(random.uniform(0.2, 0.7))
 
         # Adding health
