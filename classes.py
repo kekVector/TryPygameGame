@@ -2,22 +2,24 @@ import pygame
 from settings import *
 import random
 from func import sides_coord
+from math import pi
 
 
 class Plain:
-    def __init__(self, list_coord, game_window, speed=7, swap=False, color=RED, start_coord=False, cooldown=5, hp=10):
+    def __init__(self, plain, game_window, speed=7, swap=False, color=RED, start_coord=False, cooldown=5, hp=10,
+                 random_move=True):
         self.coord = []
         self.game_window = game_window
         self.speed = speed
         self.max_health = hp
         self.current_hp = hp
         if start_coord:
-            x_diff = start_coord[0] - list_coord[0][0]
-            y_diff = start_coord[1] - list_coord[0][0]
+            x_diff = start_coord[0] - plain['Coord'][0][0]
+            y_diff = start_coord[1] - plain['Coord'][0][0]
         else:
             x_diff = 0
             y_diff = 0
-        for i in list_coord:
+        for i in plain['Coord']:
             self.coord.append([i[0] + x_diff, i[1] + y_diff])
         self.max_x_index, self.min_x_index, self.max_y_index, self.min_y_index = sides_coord(self.coord)
         self.swap = swap
@@ -25,6 +27,25 @@ class Plain:
         self.color = color
         self.cooldown = cooldown
         self.current_cooldown = cooldown
+        self.shoot_coords = plain['index_guns_coord']
+        self.hit_count = 0
+        if random_move:
+            self.current_move_dir = random.choice(move_dirs)
+            self.change_dir_chance = 0.005
+
+    def change_dir(self):
+        if (random.random() <= self.change_dir_chance) or (self.down_side_coord() >= frame_size_y * 0.7):
+            self.current_move_dir = random.choice([i for i in move_dirs if i != self.current_move_dir])
+            self.change_dir_chance = 0.005
+        else:
+            if self.current_move_dir in ['w', 's']:
+                self.change_dir_chance += 0.001
+            else:
+                self.change_dir_chance += 0.0001
+
+    def random_move(self):
+        self.change_dir()
+        self.move(self.current_move_dir)
 
     def shoot_reload(self):
         if self.current_cooldown >= self.cooldown:
@@ -41,13 +62,15 @@ class Plain:
             self.coord[i][0] += x_diff
             self.coord[i][1] += y_diff
 
+    def get_shoot_coord(self):
+        return [[self.coord[i][0], self.coord[i][1]] for i in self.shoot_coords]
+
     def resize(self, k):
+        start_coord = (self.coord[0][0], self.coord[0][1])
         for count, i in enumerate(self.coord):
             for count2, j in enumerate(i):
                 self.coord[count][count2] = int(float(j) * k)
-
-    def get_start_coord(self):
-        return [self.coord[0][0], self.coord[0][1]]
+        self.replace(start_coord)
 
     def move(self, button):
         if button == 'w':
@@ -94,32 +117,60 @@ class Plain:
         else:
             self.current_hp += hp
 
+    def hit(self, dmg):
+        self.hit_count = 1 + dmg * 2
+
+    def draw(self, game_window):
+        pygame.draw.polygon(game_window, self.color, self.coord)
+        if self.hit_count:
+            pygame.draw.arc(game_window, self.color, (
+                self.left_side_coord(), self.up_side_coord(),
+                self.right_side_coord() - self.left_side_coord(),
+                1.1 * (self.down_side_coord() - self.up_side_coord())), pi + 1, 2 * pi - 1, 2)
+            self.hit_count -= 1
+
 
 class Bullets:
     def __init__(self, game_window, direction='up'):
-        self.bullet_list = []
-        self.color_list = []
+        self.bullet_coords = []
+        self.bullet_colors = []
+        self.bullet_speed = []
+        self.bullet_type = []
         self.game_window = game_window
         if direction == 'up':
             self.direction = 1
         else:
             self.direction = -1
 
-    def add_shoot(self, coord_start, color):
-        self.bullet_list.insert(0, coord_start)
-        self.color_list.insert(0, color)
+    def add_shoot(self, coord_start, color, type, speed=10):
+        for bull in coord_start:
+            self.bullet_coords.insert(0, bull)
+            self.bullet_colors.insert(0, color)
+            self.bullet_speed.insert(0, speed)
+            self.bullet_type.insert(0, type)
 
     def draw(self):
-        for count, elem in enumerate(self.bullet_list):
-            pygame.draw.line(self.game_window, self.color_list[count] if self.color_list[count] != 'random' else
-            random.choice([RED, GREEN, BLUE]), elem, [elem[0], (elem[1] + self.direction * (-15))], 3)
-            elem[1] -= 15 * self.direction
+        for count, elem in enumerate(self.bullet_coords):
+            if self.bullet_type[count] == 'line':
+                pygame.draw.line(self.game_window,
+                                 self.bullet_colors[count] if self.bullet_colors[count] != 'random' else
+                                 random.choice([RED, GREEN, BLUE]), elem,
+                                 [elem[0], (elem[1] + self.direction * (-15))], 3)
+
+            elif self.bullet_type[count] == 'circle':
+                pygame.draw.circle(self.game_window,
+                                   self.bullet_colors[count] if self.bullet_colors[count] != 'random' else
+                                   random.choice([RED, GREEN, BLUE]), elem, 5)
+            elem[1] -= self.bullet_speed[count] * self.direction
             if elem[1] <= 0 or elem[1] >= frame_size_y:
-                self.bullet_list.pop(count)
-                self.color_list.pop(count)
+                self.del_bullet(count)
 
     def del_bullet(self, index):
-        del self.bullet_list[index]
+        if len(self.bullet_coords) > index:
+            del self.bullet_coords[index]
+            del self.bullet_colors[index]
+            del self.bullet_speed[index]
+            del self.bullet_type[index]
 
 
 class HealthSphere:
